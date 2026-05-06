@@ -1,0 +1,218 @@
+
+<h2 class="sr-only">RideConnect app mockup — interactive mobile screens: Home, Commute, Ride Dating, Feed, and Profile</h2>
+<div style="display:flex;justify-content:center;align-items:flex-start;padding:1.5rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);min-height:780px">
+  <div style="width:360px;background:#0D0D12;border-radius:40px;border:1px solid rgba(255,255,255,0.14);overflow:hidden;height:740px;display:flex;flex-direction:column">
+    <div style="padding:14px 28px 2px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
+      <span style="font-size:13px;font-weight:600;color:#fff;letter-spacing:0.5px">9:41</span>
+      <div style="display:flex;gap:5px;align-items:center">
+        <svg width="16" height="11" viewBox="0 0 16 11"><rect x="0" y="5" width="3" height="6" rx="0.5" fill="rgba(255,255,255,0.9)"/><rect x="4.5" y="3" width="3" height="8" rx="0.5" fill="rgba(255,255,255,0.9)"/><rect x="9" y="1" width="3" height="10" rx="0.5" fill="rgba(255,255,255,0.9)"/><rect x="13.5" y="0" width="2.5" height="11" rx="0.5" fill="rgba(255,255,255,0.35)"/></svg>
+        <svg width="15" height="12" viewBox="0 0 15 12"><path d="M7.5 2.5C9.8 2.5 11.8 3.5 13.2 5L14.3 3.7C12.6 2 10.2 1 7.5 1C4.8 1 2.4 2 0.7 3.7L1.8 5C3.2 3.5 5.2 2.5 7.5 2.5Z" fill="rgba(255,255,255,0.9)"/><path d="M7.5 5.5C9 5.5 10.4 6.1 11.4 7.1L12.5 5.8C11.2 4.6 9.4 3.9 7.5 3.9C5.6 3.9 3.8 4.6 2.5 5.8L3.6 7.1C4.6 6.1 6 5.5 7.5 5.5Z" fill="rgba(255,255,255,0.9)"/><circle cx="7.5" cy="10.5" r="1.5" fill="rgba(255,255,255,0.9)"/></svg>
+        <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="1" width="22" height="10" rx="3" stroke="rgba(255,255,255,0.4)" stroke-width="1" fill="none"/><rect x="1.5" y="2" width="18" height="8" rx="2" fill="rgba(255,255,255,0.9)"/><path d="M24 4.5v3c1-.5 1.5-1 1.5-1.5S25 5 24 4.5Z" fill="rgba(255,255,255,0.4)"/></svg>
+      </div>
+    </div>
+    <div id="screens" style="flex:1;overflow:hidden"></div>
+    <div id="bnav" style="display:flex;justify-content:space-around;align-items:center;padding:10px 0 24px;background:#13131A;border-top:0.5px solid rgba(255,255,255,0.07);flex-shrink:0"></div>
+  </div>
+</div>
+<script>
+const OR='#FF5B35',TL='#00C9A7',BG='#0D0D12',CD='#1A1A22',W='rgba(255,255,255,0.92)',WM='rgba(255,255,255,0.52)',WL='rgba(255,255,255,0.22)';
+let cur=0;
+const navItems=[
+  {l:'Home',p:'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'},
+  {l:'Commute',p:'M12 19l9 2-9-18-9 18 9-2zm0 0v-8'},
+  {l:'Dating',p:'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z'},
+  {l:'Feed',p:'M4 6h16M4 10h16M4 14h8'},
+  {l:'Profile',p:'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'}
+];
+function card(s){return`background:${CD};border-radius:14px;padding:14px;border:0.5px solid rgba(255,255,255,0.06);${s||''}`}
+function avatar(n,c,sz){sz=sz||40;return`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:${Math.round(sz*0.38)}px;flex-shrink:0">${n[0]}</div>`}
+function badge(txt,bg,col){return`<div style="background:${bg};border-radius:6px;padding:3px 8px;font-size:11px;color:${col};font-weight:500">${txt}</div>`}
+function pill(txt){return badge(txt,'rgba(255,255,255,0.07)',WM)}
+
+function homeHTML(){
+  const ppl=[['Ananya',OR],['Ravi',TL],['Meera','#A78BFA'],['Arjun','#34D399'],['Divya','#F472B6']];
+  const acts=[{n:'Ananya K.',a:'is on your route today',t:'5m ago',c:OR},{n:'Ravi M.',a:'posted a commute reel',t:'12m ago',c:TL},{n:'Meera P.',a:'liked your profile',t:'1h ago',c:'#A78BFA'}];
+  return`<div style="height:100%;overflow-y:auto;padding:16px;scrollbar-width:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <div><div style="font-size:12px;color:${WM}">Good morning</div><div style="font-size:20px;font-weight:700;color:${W}">Priya S.</div></div>
+      ${avatar('Priya',OR,42)}
+    </div>
+    <div style="background:${OR};border-radius:16px;padding:16px;margin-bottom:12px">
+      <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Today's Commute</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
+        <div style="flex:1"><div style="font-size:11px;color:rgba(255,255,255,0.65)">From</div><div style="font-size:15px;font-weight:700;color:#fff">HSR Layout</div></div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <div style="flex:1;text-align:right"><div style="font-size:11px;color:rgba(255,255,255,0.65)">To</div><div style="font-size:15px;font-weight:700;color:#fff">Whitefield</div></div>
+      </div>
+      <div style="display:flex;gap:8px">${badge('3 Buddies Found','rgba(255,255,255,0.22)','#fff')}${badge('Save ₹95 today','rgba(255,255,255,0.22)','#fff')}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div onclick="go(1)" style="${card('cursor:pointer')}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${OR}" stroke-width="2" stroke-linecap="round"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+        <div style="font-size:13px;font-weight:600;color:${W};margin-top:8px">Find Rides</div>
+        <div style="font-size:11px;color:${WM}">12 on your route</div>
+      </div>
+      <div onclick="go(2)" style="${card('cursor:pointer')}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${TL}" stroke-width="2" stroke-linecap="round"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        <div style="font-size:13px;font-weight:600;color:${W};margin-top:8px">Ride Dating</div>
+        <div style="font-size:11px;color:${WM}">4 new matches</div>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:600;color:${WM};letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px">Near Your Route</div>
+    <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none">
+      ${ppl.map(([n,c])=>`<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px">${avatar(n,c,50)}<div style="font-size:10px;color:${WM}">${n}</div></div>`).join('')}
+    </div>
+    <div style="font-size:11px;font-weight:600;color:${WM};letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px">Activity</div>
+    ${acts.map(a=>`<div style="${card('display:flex;align-items:center;gap:10px;margin-bottom:8px')}">${avatar(a.n,a.c,34)}<div style="flex:1;font-size:12px;color:${W}"><b style="color:${W}">${a.n}</b> <span style="color:${WM}">${a.a}</span></div><div style="font-size:10px;color:${WL};flex-shrink:0">${a.t}</div></div>`).join('')}
+  </div>`;
+}
+
+function commuteHTML(){
+  const matches=[
+    {n:'Ananya Kumar',r:'SDE at Infosys',t:'8:45 AM',m:'96%',mu:3,c:OR,v:true},
+    {n:'Ravi Mehta',r:'MBA \'25, IIMB',t:'9:00 AM',m:'89%',mu:1,c:TL,v:false},
+    {n:'Meera Pillai',r:'Designer at Swiggy',t:'8:50 AM',m:'84%',mu:2,c:'#A78BFA',v:true}
+  ];
+  return`<div style="height:100%;overflow-y:auto;padding:16px;scrollbar-width:none">
+    <div style="font-size:20px;font-weight:700;color:${W}">Commute Buddies</div>
+    <div style="font-size:12px;color:${WM};margin-bottom:14px">12 people on your route · Today</div>
+    <div style="${card('display:flex;align-items:center;gap:10px;margin-bottom:14px')}">
+      <div style="flex:1"><div style="font-size:10px;color:${WM}">From</div><div style="font-size:14px;font-weight:600;color:${W}">HSR Layout</div></div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${OR}" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <div style="flex:1;text-align:right"><div style="font-size:10px;color:${WM}">To</div><div style="font-size:14px;font-weight:600;color:${W}">Whitefield</div></div>
+    </div>
+    ${matches.map(p=>`
+      <div style="${card('margin-bottom:10px')}">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          ${avatar(p.n,p.c,46)}
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:5px">
+              <div style="font-size:14px;font-weight:700;color:${W}">${p.n}</div>
+              ${p.v?`<svg width="13" height="13" viewBox="0 0 24 24" fill="${TL}"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`:''}
+            </div>
+            <div style="font-size:11px;color:${WM}">${p.r}</div>
+          </div>
+          <div style="text-align:right"><div style="font-size:16px;font-weight:700;color:${OR}">${p.m}</div><div style="font-size:10px;color:${WM}">match</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;gap:6px">${badge('Leaves '+p.t,'rgba(255,91,53,0.12)',OR)}${badge(p.mu+' mutual','rgba(255,255,255,0.06)',WM)}</div>
+          <div style="display:flex;gap:6px">
+            <button style="background:rgba(255,255,255,0.06);border:none;border-radius:8px;padding:6px 10px;font-size:11px;color:${WM};cursor:pointer">Skip</button>
+            <button style="background:${OR};border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;color:#fff;cursor:pointer">Connect</button>
+          </div>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function datingHTML(){
+  const tags=['HSR Layout','Whitefield','Startups','Chai'];
+  return`<div style="height:100%;overflow-y:auto;padding:16px;scrollbar-width:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+      <div style="font-size:20px;font-weight:700;color:${W}">Ride Dating</div>
+      ${badge('Women Init.',`rgba(0,201,167,0.12)`,TL)}
+    </div>
+    <div style="font-size:11px;color:${WM};margin-bottom:14px">The ride is the date — low pressure, always safe</div>
+    <div style="background:${CD};border-radius:20px;overflow:hidden;margin-bottom:12px;border:0.5px solid rgba(255,255,255,0.06)">
+      <div style="background:#1F1A2E;height:190px;display:flex;align-items:center;justify-content:center;position:relative">
+        <div style="width:88px;height:88px;border-radius:50%;background:${TL};display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:32px">A</div>
+        <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.45);border-radius:7px;padding:3px 8px;font-size:10px;color:#fff">1.2 km away</div>
+        <div style="position:absolute;bottom:10px;left:10px;background:rgba(0,201,167,0.18);border:0.5px solid ${TL};border-radius:6px;padding:3px 8px;font-size:10px;color:${TL}">IIMB MBA '25</div>
+      </div>
+      <div style="padding:14px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+          <div><div style="font-size:18px;font-weight:700;color:${W}">Ananya, 24</div><div style="font-size:11px;color:${WM}">Product Manager · Razorpay</div></div>
+          <div style="text-align:right"><div style="font-size:17px;font-weight:700;color:${OR}">94%</div><div style="font-size:10px;color:${WM}">route match</div></div>
+        </div>
+        <div style="font-size:12px;color:${WM};margin-bottom:10px;line-height:1.45">"Love commute convos about startups, chai, and bad puns."</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">${tags.map(t=>pill(t)).join('')}</div>
+        <div style="background:rgba(255,91,53,0.08);border-radius:10px;padding:10px 12px;margin-bottom:10px">
+          <div style="font-size:10px;color:${OR};font-weight:600;margin-bottom:2px">Suggested Ride Date</div>
+          <div style="font-size:12px;color:${W}">Blue Tokai Coffee, Koramangala — Thu 9:30 AM</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button style="flex:1;background:rgba(255,255,255,0.06);border:none;border-radius:12px;padding:11px;font-size:13px;color:${WM};cursor:pointer">Pass</button>
+          <button style="flex:2;background:${OR};border:none;border-radius:12px;padding:11px;font-size:13px;font-weight:700;color:#fff;cursor:pointer">Send Ride Date Request</button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;background:rgba(0,201,167,0.07);border:0.5px solid rgba(0,201,167,0.18);border-radius:10px;padding:10px 12px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${TL}" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div style="font-size:11px;color:${TL}">Live tracking + SOS on every ride date</div>
+    </div>
+  </div>`;
+}
+
+function feedHTML(){
+  const posts=[
+    {n:'Ravi M.',s:'SDE · Whitefield Route',t:'8m ago',c:TL,body:'The Silk Board flyover is CLEAR today! Left 15 mins earlier — best commute in months.',likes:47,cmt:12,tag:'Route Update'},
+    {n:'Meera P.',s:'Designer · HSR → Koramangala',t:'1h ago',c:'#A78BFA',body:'Found 2 commute buddies this month. Saved ₹2,800 already. RideConnect is something else.',likes:89,cmt:24,tag:'Story'},
+    {n:'Campus RVCE',s:'Official Campus Page',t:'3h ago',c:OR,body:'TechFest carpool this Sat! Meet at Gate 2 at 10 AM. Join the group for your area.',likes:203,cmt:67,tag:'Campus'},
+  ];
+  const ic=(path)=>`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${WM}" stroke-width="2" stroke-linecap="round"><path d="${path}"/></svg>`;
+  return`<div style="height:100%;overflow-y:auto;scrollbar-width:none">
+    <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:0.5px solid rgba(255,255,255,0.06)">
+      <div style="font-size:18px;font-weight:700;color:${W}">Commute Feed</div>
+      ${ic('M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9')}
+    </div>
+    ${posts.map(p=>`
+      <div style="border-bottom:0.5px solid rgba(255,255,255,0.06);padding:14px 16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          ${avatar(p.n,p.c,36)}
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:${W}">${p.n}</div><div style="font-size:10px;color:${WM}">${p.s} · ${p.t}</div></div>
+          ${badge(p.tag,'rgba(255,91,53,0.1)',OR)}
+        </div>
+        <div style="font-size:12px;color:${W};line-height:1.5;margin-bottom:12px">${p.body}</div>
+        <div style="display:flex;gap:14px;align-items:center">
+          <div style="display:flex;align-items:center;gap:4px">${ic('M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z')}<span style="font-size:11px;color:${WM}">${p.likes}</span></div>
+          <div style="display:flex;align-items:center;gap:4px">${ic('M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z')}<span style="font-size:11px;color:${WM}">${p.cmt}</span></div>
+          <div style="display:flex;align-items:center;gap:4px">${ic('M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z')}<span style="font-size:11px;color:${WM}">Share</span></div>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function profileHTML(){
+  const stats=[{v:'₹2,840',l:'Saved'},{v:'24',l:'Rides'},{v:'8',l:'Buddies'}];
+  const buds=[['Ananya K.',OR],['Ravi M.',TL],['Arjun D.','#A78BFA']];
+  const tags=['HSR Layout','Whitefield Route','AI/ML','Music'];
+  return`<div style="height:100%;overflow-y:auto;padding:16px;scrollbar-width:none">
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="width:72px;height:72px;border-radius:50%;background:${OR};display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:28px;margin:0 auto 10px">P</div>
+      <div style="font-size:19px;font-weight:700;color:${W}">Priya Sharma</div>
+      <div style="font-size:12px;color:${WM};margin-bottom:8px">B.Tech CSE · RVCE Bangalore · Batch 2022–26</div>
+      <div style="display:flex;justify-content:center;gap:5px;flex-wrap:wrap">${tags.map(t=>badge(t,'rgba(255,91,53,0.1)',OR)).join('')}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+      ${stats.map(s=>`<div style="${card('text-align:center')}"><div style="font-size:16px;font-weight:700;color:${W}">${s.v}</div><div style="font-size:10px;color:${WM}">${s.l}</div></div>`).join('')}
+    </div>
+    <div style="${card('margin-bottom:10px')}">
+      <div style="font-size:10px;font-weight:600;color:${TL};letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">Professional Profile</div>
+      <div style="font-size:14px;font-weight:600;color:${W}">Software Engineering Intern Seeker</div>
+      <div style="font-size:11px;color:${WM};margin-bottom:8px">Backend · AI/ML · Startup enthusiast</div>
+      <div style="display:flex;gap:5px">${badge('Open to Network',`rgba(0,201,167,0.1)`,TL)}${badge('Placement Season',`rgba(0,201,167,0.1)`,TL)}</div>
+    </div>
+    <div style="${card('margin-bottom:12px')}">
+      <div style="font-size:10px;font-weight:600;color:${WM};letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px">Commute Buddies</div>
+      ${buds.map(([n,c])=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">${avatar(n,c,34)}<div style="flex:1;font-size:13px;font-weight:500;color:${W}">${n}</div><div style="font-size:10px;color:${WM}">Same route</div></div>`).join('')}
+    </div>
+    <button style="width:100%;background:${OR};border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:700;color:#fff;cursor:pointer">Upgrade to RideConnect Plus — ₹199/mo</button>
+  </div>`;
+}
+
+const screens={0:homeHTML,1:commuteHTML,2:datingHTML,3:feedHTML,4:profileHTML};
+
+function go(i){
+  cur=i;
+  document.getElementById('screens').innerHTML=screens[cur]();
+  document.getElementById('bnav').innerHTML=navItems.map((item,j)=>`
+    <button onclick="go(${j})" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;outline:none">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${j===cur?OR:WL}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${item.p}"/></svg>
+      <span style="font-size:9px;color:${j===cur?OR:WL};font-weight:${j===cur?700:400}">${item.l}</span>
+    </button>
+  `).join('');
+}
+go(0);
+</script>
